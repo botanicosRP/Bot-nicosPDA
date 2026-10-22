@@ -1,0 +1,448 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Botánicos RP | Portal Oficial</title>
+<style>
+:root {
+  --bg:#0a1019; --panel:#141e2c; --panel2:#1c2a3c;
+  --line:#304158; --text:#f2f6fc; --muted:#9aacc1;
+  --green:#39dda0; --blue:#67adff; --red:#ff697c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+header{background:#101925;border-bottom:1px solid var(--line);padding:18px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-size:23px;font-weight:900;letter-spacing:1px}
+.brand span{color:var(--green)}
+.muted,.small{color:var(--muted)}
+.small{font-size:12px;margin-top:5px}
+main{width:min(1100px,92%);margin:25px auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+h1{font-size:27px}h2{font-size:21px}h1,h2,h3{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.stat{background:var(--panel2);border-radius:10px;padding:15px}
+.stat strong{font-size:24px;display:block;margin-bottom:6px}
+label{display:block;font-size:13px;margin:12px 0 6px;color:#d0dceb}
+input,select,textarea{width:100%;padding:12px;background:#0b1420;border:1px solid var(--line);border-radius:8px;color:var(--text);font:inherit}
+textarea{min-height:85px;resize:vertical}
+button{background:var(--green);color:#06150e;border:0;border-radius:8px;padding:11px 14px;font-weight:800;cursor:pointer}
+button.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+button.danger{background:#48232c;color:#ffc2ca}
+button:disabled{opacity:.6}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+nav button{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+nav button.active{background:var(--green);color:#06150e}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.entry{padding:14px 0;border-top:1px solid var(--line);overflow-wrap:anywhere}
+.badge{display:inline-block;border-radius:30px;padding:5px 9px;background:#234136;color:#9af0c9;font-size:12px}
+.notice{padding:12px;background:#19342c;border-radius:8px;color:#aaf4d8;margin-bottom:15px}
+.error{background:#43222b;color:#ffc0c7}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--muted);padding:24px;font-size:12px}
+@media(max-width:650px){.grid,.stats{grid-template-columns:1fr}main{margin:16px auto}.card{padding:15px}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">BOTÁNICOS <span>RP</span></div>
+    <div class="small">PORTAL CIUDADANO · GTA V ROLEPLAY</div>
+  </div>
+  <div id="status" class="small">Sin sesión iniciada</div>
+</header>
+
+<main>
+  <div id="message" class="hidden" role="status"></div>
+
+  <section id="auth">
+    <div class="card">
+      <h1>Portal de Los Santos</h1>
+      <p class="muted">Registro ciudadano, vehículos y departamentos de roleplay.</p>
+    </div>
+    <div class="grid">
+      <form id="loginForm" class="card">
+        <h2>Iniciar sesión</h2>
+        <label for="loginUser">Usuario</label>
+        <input id="loginUser" required autocomplete="username">
+        <label for="loginPass">Contraseña</label>
+        <input id="loginPass" type="password" required autocomplete="current-password">
+        <button style="width:100%;margin-top:16px">Entrar</button>
+      </form>
+      <form id="registerForm" class="card">
+        <h2>Crear personaje</h2>
+        <label for="regUser">Usuario (3–24 caracteres)</label>
+        <input id="regUser" minlength="3" maxlength="24" required>
+        <label for="regPass">Contraseña (mínimo 8 caracteres)</label>
+        <input id="regPass" type="password" minlength="8" required>
+        <label for="first">Nombre del personaje</label>
+        <input id="first" maxlength="40" required>
+        <label for="last">Apellido del personaje</label>
+        <input id="last" maxlength="40" required>
+        <label for="birth">Fecha de nacimiento</label>
+        <input id="birth" type="date" required>
+        <label for="job">Profesión</label>
+        <select id="job">
+          <option>Ciudadano</option><option>Desempleado</option>
+          <option>Policía</option><option>EMS</option>
+          <option>Mecánico</option><option>Taxista</option>
+        </select>
+        <button style="width:100%;margin-top:16px">Crear cuenta</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>Acceso del departamento policial</h2>
+      <p class="muted">Inicia sesión con la clave policial para abrir las funciones de policía de esta demostración.</p>
+      <form id="policeLoginForm">
+        <label for="policePass">Contraseña policial</label>
+        <input id="policePass" type="password" required autocomplete="off">
+        <button style="margin-top:12px">Acceso Policía</button>
+      </form>
+      <p class="small">Este acceso de demostración no protege datos contra alguien que inspeccione el código de la web.</p>
+    </div>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="card row">
+      <div>
+        <h2 id="welcome" style="margin-bottom:5px">Bienvenido</h2>
+        <div id="roleLabel" class="muted">Portal ciudadano</div>
+      </div>
+      <div class="actions">
+        <button id="policeExit" class="secondary hidden">Cerrar sesión policial</button>
+        <button id="logout" class="danger">Salir</button>
+      </div>
+    </div>
+
+    <nav id="nav">
+      <button class="active" data-page="home">Inicio</button>
+      <button data-page="citizens">Ciudadanos</button>
+      <button data-page="profile">Mi personaje</button>
+      <button data-page="vehicles">Vehículos</button>
+      <button data-page="mechanics">Mecánicos</button>
+      <button data-page="ems">EMS</button>
+      <button data-page="police">Policía</button>
+      <button data-page="fines">Multas</button>
+      <button data-page="reports">Informes</button>
+    </nav>
+    <div id="content"></div>
+  </section>
+</main>
+<footer>BOTÁNICOS RP · Portal comunitario no oficial para GTA V</footer>
+
+<script>
+"use strict";
+
+const POLICE_PASSWORD = "botanciospolicia8";
+const DBKEY = "botanicosrp_portal_v1";
+const SESSIONKEY = "botanicosrp_user_v1";
+const POLICEKEY = "botanicosrp_police_v1";
+
+const moduleInfo = {
+  vehicles:{title:"Registro de vehículos",fields:["Modelo","Matrícula","Propietario"],policeOnly:false},
+  mechanics:{title:"Departamento de mecánicos",fields:["Vehículo o cliente","Descripción del servicio"],policeOnly:false},
+  ems:{title:"Servicios médicos EMS",fields:["Paciente","Descripción del servicio"],policeOnly:false},
+  police:{title:"Departamento de Policía",fields:["Asunto","Descripción de la actuación"],policeOnly:true},
+  fines:{title:"Multas",fields:["Ciudadano sancionado","Motivo","Importe"],policeOnly:true},
+  reports:{title:"Informes policiales",fields:["Título","Descripción del informe"],policeOnly:true}
+};
+
+function emptyDB(){
+  return {users:[],records:{vehicles:[],mechanics:[],ems:[],police:[],fines:[],reports:[]}};
+}
+function loadDB(){
+  try{
+    const d=JSON.parse(localStorage.getItem(DBKEY)||"null");
+    if(!d||!Array.isArray(d.users))return emptyDB();
+    const base=emptyDB();
+    for(const k of Object.keys(base.records)){
+      if(!Array.isArray(d.records?.[k]))d.records[k]=[];
+    }
+    return d;
+  }catch(e){return emptyDB()}
+}
+let db=loadDB();
+let user=null;
+let police=false;
+let page="home";
+let search="";
+
+function saveDB(){
+  try{
+    localStorage.setItem(DBKEY,JSON.stringify(db));
+    return true;
+  }catch(e){msg("No se pudieron guardar los datos en este navegador.",true);return false}
+}
+function esc(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function msg(text,error=false){
+  const el=document.getElementById("message");
+  el.textContent=text;
+  el.className=error?"notice error":"notice";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function clearMsg(){
+  document.getElementById("message").className="hidden";
+}
+function makeId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,9)}
+async function hashPass(pass,salt){
+  if(!crypto?.subtle)throw new Error("Abre la web con HTTPS para iniciar sesión.");
+  const bytes=new TextEncoder().encode(salt+":"+pass);
+  const digest=await crypto.subtle.digest("SHA-256",bytes);
+  return [...new Uint8Array(digest)].map(n=>n.toString(16).padStart(2,"0")).join("");
+}
+function getUser(){
+  const name=localStorage.getItem(SESSIONKEY);
+  return db.users.find(u=>u.username===name)||null;
+}
+function render(){
+  user=getUser();
+  document.getElementById("auth").classList.toggle("hidden",!!user);
+  document.getElementById("app").classList.toggle("hidden",!user);
+  document.getElementById("status").textContent=user?
+    (police?"Sesión de demostración: Policía":"Usuario: "+user.username):"Sin sesión iniciada";
+  if(!user)return;
+  document.getElementById("welcome").textContent="Hola, "+user.first;
+  document.getElementById("roleLabel").textContent=police?
+    "Acceso policial activo (demostración)":"Portal ciudadano";
+  document.getElementById("policeExit").classList.toggle("hidden",!police);
+  document.querySelectorAll("#nav button").forEach(b=>{
+    const info=moduleInfo[b.dataset.page];
+    b.classList.toggle("hidden",!!(info?.policeOnly&&!police));
+    b.classList.toggle("active",b.dataset.page===page);
+  });
+  if(moduleInfo[page]?.policeOnly&&!police)page="home";
+  renderPage();
+}
+
+document.getElementById("registerForm").addEventListener("submit",async e=>{
+  e.preventDefault();clearMsg();
+  const username=document.getElementById("regUser").value.trim().toLowerCase();
+  const password=document.getElementById("regPass").value;
+  const first=document.getElementById("first").value.trim();
+  const last=document.getElementById("last").value.trim();
+  const birth=document.getElementById("birth").value;
+  const job=document.getElementById("job").value;
+
+  if(!/^[a-z0-9_-]{3,24}$/.test(username)){
+    msg("El usuario debe usar entre 3 y 24 letras, números, guiones o guiones bajos.",true);return;
+  }
+  if(password.length<8){msg("La contraseña debe tener al menos 8 caracteres.",true);return}
+  if(db.users.some(u=>u.username===username)){msg("Ese usuario ya está registrado en este navegador.",true);return}
+  if(!first||!last||!birth||birth>new Date().toISOString().slice(0,10)){
+    msg("Revisa el nombre, apellido y fecha de nacimiento.",true);return;
+  }
+  try{
+    const salt=makeId()+makeId();
+    const passwordHash=await hashPass(password,salt);
+    db.users.push({
+      id:makeId(),username,salt,passwordHash,first,last,birth,job,
+      rpId:"BR-"+Math.random().toString(36).slice(2,8).toUpperCase(),
+      created:new Date().toISOString()
+    });
+    if(!saveDB())return;
+    localStorage.setItem(SESSIONKEY,username);
+    document.getElementById("registerForm").reset();
+    page="home";render();msg("Personaje creado correctamente.");
+  }catch(err){msg(err.message||"No se pudo crear la cuenta.",true)}
+});
+
+document.getElementById("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();clearMsg();
+  const username=document.getElementById("loginUser").value.trim().toLowerCase();
+  const password=document.getElementById("loginPass").value;
+  const u=db.users.find(x=>x.username===username);
+  if(!u){msg("Usuario o contraseña incorrectos.",true);return}
+  try{
+    if(await hashPass(password,u.salt)!==u.passwordHash){
+      msg("Usuario o contraseña incorrectos.",true);return;
+    }
+    localStorage.setItem(SESSIONKEY,u.username);
+    police=false;page="home";render();clearMsg();
+  }catch(err){msg(err.message||"Error al iniciar sesión.",true)}
+});
+
+document.getElementById("policeLoginForm").addEventListener("submit",e=>{
+  e.preventDefault();clearMsg();
+  const pass=document.getElementById("policePass").value;
+  if(pass!==POLICE_PASSWORD){msg("Contraseña policial incorrecta.",true);return}
+  if(!user){
+    msg("Primero inicia sesión con una cuenta ciudadana y después accede como Policía.",true);return;
+  }
+  police=true;page="police";
+  document.getElementById("policePass").value="";
+  render();msg("Acceso policial activado en este navegador.");
+});
+
+document.getElementById("policeExit").addEventListener("click",()=>{
+  police=false;page="home";render();msg("Has cerrado la sesión policial.");
+});
+document.getElementById("logout").addEventListener("click",()=>{
+  localStorage.removeItem(SESSIONKEY);police=false;user=null;page="home";
+  render();clearMsg();
+});
+document.getElementById("nav").addEventListener("click",e=>{
+  const b=e.target.closest("button[data-page]");
+  if(!b||b.classList.contains("hidden"))return;
+  page=b.dataset.page;clearMsg();renderPage();
+});
+
+function stat(n,label){
+  return `<div class="stat"><strong>${esc(n)}</strong><span class="muted">${esc(label)}</span></div>`;
+}
+function link(page,title){
+  return `<button class="secondary" data-link="${esc(page)}">${esc(title)}</button>`;
+}
+function renderPage(){
+  if(!user)return;
+  const el=document.getElementById("content");
+  const total=Object.values(db.records).reduce((n,a)=>n+a.length,0);
+
+  if(page==="home"){
+    el.innerHTML=`<div class="card">
+      <h1>Panel principal</h1>
+      <p class="muted">Bienvenido al portal oficial de roleplay.</p>
+      <div class="stats">
+        ${stat(db.users.length,"Personajes en este navegador")}
+        ${stat(total,"Registros locales")}
+        ${stat(user.rpId,"Tu ID de personaje")}
+      </div>
+    </div>
+    <div class="card"><h2>Accesos rápidos</h2><div class="actions">
+      ${link("citizens","Ciudadanos")}${link("profile","Mi personaje")}
+      ${link("vehicles","Vehículos")}${link("mechanics","Mecánicos")}
+      ${link("ems","EMS")}
+      ${police?link("police","Policía"): ""}
+      ${police?link("fines","Multas"): ""}
+      ${police?link("reports","Informes"): ""}
+    </div></div>
+    <div class="notice">Versión de demostración: los datos se guardan en este navegador.</div>`;
+    return;
+  }
+
+  if(page==="citizens"){
+    el.innerHTML=`<div class="card"><h1>Directorio ciudadano</h1>
+      <label for="citizenSearch">Buscar ciudadano</label>
+      <input id="citizenSearch" value="${esc(search)}" placeholder="Nombre, apellido, profesión o ID">
+      <div id="citizenList"></div></div>`;
+    renderCitizens();return;
+  }
+
+  if(page==="profile"){
+    el.innerHTML=`<div class="card"><h1>Mi personaje</h1>
+      ${profileRow("Nombre completo",user.first+" "+user.last)}
+      ${profileRow("ID de roleplay",user.rpId)}
+      ${profileRow("Usuario",user.username)}
+      ${profileRow("Fecha de nacimiento",user.birth)}
+      ${profileRow("Profesión",user.job)}
+      </div>`;return;
+  }
+
+  const info=moduleInfo[page];
+  if(info){
+    if(info.policeOnly&&!police){el.innerHTML=`<div class="card"><h2>Acceso restringido</h2><p>Inicia sesión como Policía para acceder a esta sección.</p></div>`;return}
+    renderModule(page);return;
+  }
+  el.innerHTML="";
+}
+function profileRow(title,value){
+  return `<div class="entry"><span class="muted">${esc(title)}</span><p><strong>${esc(value)}</strong></p></div>`;
+}
+function renderCitizens(){
+  const el=document.getElementById("citizenList");if(!el)return;
+  const term=search.toLowerCase();
+  const list=db.users.filter(u=>
+    [u.first,u.last,u.job,u.rpId].some(v=>String(v).toLowerCase().includes(term))
+  );
+  el.innerHTML=list.length?list.map(u=>`
+    <div class="entry row"><div><strong>${esc(u.first)} ${esc(u.last)}</strong>
+    <div class="small">${esc(u.rpId)} · ${esc(u.job)}</div></div>
+    <span class="badge">${esc(u.birth)}</span></div>`).join(""):`<p class="muted">No hay ciudadanos coincidentes.</p>`;
+}
+document.getElementById("content").addEventListener("input",e=>{
+  if(e.target.id==="citizenSearch"){search=e.target.value;renderCitizens()}
+});
+document.getElementById("content").addEventListener("click",e=>{
+  const b=e.target.closest("[data-link]");
+  if(b){page=b.dataset.link;clearMsg();renderPage()}
+});
+
+function renderModule(key){
+  const info=moduleInfo[key];
+  const fields=info.fields.map((f,i)=>`
+    <label for="f${i}">${esc(f)}</label>
+    ${key==="fines"&&i===2?
+      `<input id="f${i}" type="number" min="0" step="1" required>`:
+      (i===1&&["mechanics","ems","police","reports"].includes(key))?
+      `<textarea id="f${i}" maxlength="2000" required></textarea>`:
+      `<input id="f${i}" maxlength="150" required>`}`).join("");
+  const records=db.records[key]||[];
+  document.getElementById("content").innerHTML=`
+    <div class="card"><h1>${esc(info.title)}</h1>
+      <p class="muted">${info.policeOnly?"Sección reservada al acceso policial.":"Registros de roleplay."}</p></div>
+    <div class="card"><h2>Nuevo registro</h2>
+      <form id="recordForm" data-key="${esc(key)}">${fields}
+        <button style="margin-top:15px">Guardar registro</button>
+      </form></div>
+    <div class="card"><div class="row"><h2>Registros guardados</h2>
+      <span class="badge">${records.length} registros</span></div>
+      <div id="recordList"></div></div>`;
+  renderRecords(key);
+}
+function renderRecords(key){
+  const el=document.getElementById("recordList");if(!el)return;
+  const rows=(db.records[key]||[]).slice().reverse();
+  el.innerHTML=rows.length?rows.map(r=>`
+    <div class="entry">
+      <div class="row"><strong>${esc(r.title)}</strong>
+      <span class="small">${esc(new Date(r.created).toLocaleString("es-ES"))}</span></div>
+      ${r.description?`<p>${esc(r.description)}</p>`:""}
+      ${r.amount!==undefined?`<p><strong>Importe:</strong> ${esc(r.amount)} $</p>`:""}
+      <div class="small">Creado por ${esc(r.by)}</div>
+      ${(r.by===user.username||police)&&(!moduleInfo[key].policeOnly||police)?
+        `<button class="danger" style="margin-top:10px" data-delete="${esc(r.id)}" data-key="${esc(key)}">Eliminar</button>`:""}
+    </div>`).join(""):`<p class="muted">Todavía no hay registros.</p>`;
+}
+document.getElementById("content").addEventListener("submit",e=>{
+  if(e.target.id!=="recordForm")return;
+  e.preventDefault();
+  const key=e.target.dataset.key,info=moduleInfo[key];
+  if(info.policeOnly&&!police){msg("Necesitas acceso policial.",true);return}
+  const vals=info.fields.map((_,i)=>document.getElementById("f"+i).value.trim());
+  if(vals.some(v=>!v)){msg("Completa todos los campos.",true);return}
+  const r={id:makeId(),title:vals[0],description:"",by:user.username,created:new Date().toISOString()};
+  if(key==="vehicles"){
+    r.description="Matrícula: "+vals[1]+" · Propietario: "+vals[2];
+  }else if(key==="fines"){
+    const amount=Number(vals[2]);
+    if(!Number.isFinite(amount)||amount<0){msg("Introduce un importe válido.",true);return}
+    r.title=vals[0]+" — "+vals[1];r.amount=amount;
+  }else if(key==="mechanics"||key==="ems"||key==="police"||key==="reports"){
+    r.description=vals[1];
+  }
+  db.records[key].push(r);
+  if(!saveDB())return;
+  renderModule(key);msg("Registro guardado correctamente.");
+});
+document.getElementById("content").addEventListener("click",e=>{
+  const b=e.target.closest("[data-delete]");
+  if(!b)return;
+  const key=b.dataset.key,id=b.dataset.delete;
+  const r=db.records[key].find(x=>x.id===id);
+  if(!r)return;
+  if(moduleInfo[key].policeOnly&&!police){msg("Acceso policial requerido.",true);return}
+  if(r.by!==user.username&&!police){msg("Solo puedes eliminar tus propios registros.",true);return}
+  if(!confirm("¿Quieres eliminar este registro?"))return;
+  db.records[key]=db.records[key].filter(x=>x.id!==id);
+  if(!saveDB())return;
+  renderModule(key);msg("Registro eliminado.");
+});
+
+render();
+</script>
+</body>
+</html>
