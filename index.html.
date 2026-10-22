@@ -1,0 +1,424 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Los Santos RP | Sistema Central</title>
+<style>
+:root{--bg:#080d16;--panel:#111c2c;--line:#283a51;--blue:#43b7ff;--cyan:#56f0e0;--text:#edf5ff;--muted:#91a4bd;--green:#61e6a5;--red:#ff7387}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 70% 0,#15314b,transparent 45%),var(--bg);color:var(--text);font-family:Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{height:auto;min-height:75px;padding:16px 4%;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;background:#09111eee;border-bottom:1px solid var(--line)}
+.logo{font-size:19px;font-weight:900;letter-spacing:2px}.logo span{color:var(--cyan)}
+nav{display:flex;gap:7px;flex-wrap:wrap}
+button{background:#16263a;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 13px}
+button:hover{border-color:var(--cyan);filter:brightness(1.1)}
+.primary{background:linear-gradient(120deg,var(--blue),var(--cyan));color:#06121c;border:0;font-weight:bold}
+.danger{color:#ffb1bd;border-color:#633344;background:#301924}
+main{max-width:1300px;margin:auto;padding:25px 20px 50px}
+.hero{padding:25px 0}
+.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:3px;font-weight:bold}
+h1{font-size:clamp(29px,5vw,45px);margin:10px 0}
+h2{font-size:22px}h3{font-size:16px}
+p{color:var(--muted);line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin:18px 0}
+.card{padding:21px;background:linear-gradient(145deg,#142238,#0d1624);border:1px solid var(--line);border-radius:13px;min-width:0}
+.stat{font-size:29px;font-weight:900;color:var(--cyan);margin:10px 0}
+.icon{font-size:25px;color:var(--cyan);margin-bottom:12px}
+.module{cursor:pointer;transition:.2s}
+.module:hover{transform:translateY(-3px);border-color:var(--cyan)}
+input,select,textarea{width:100%;padding:12px;margin:6px 0 14px;background:#091321;color:white;border:1px solid var(--line);border-radius:7px}
+label{font-size:12px;color:#b9c9dc}
+textarea{min-height:100px;resize:vertical}
+form button{margin-top:4px}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{font-size:11px;padding:5px 9px;border-radius:20px;background:#14372e;color:var(--green)}
+.tablewrap{overflow-x:auto}
+table{width:100%;min-width:650px;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line)}
+th{font-size:11px;color:var(--cyan);text-transform:uppercase}
+.id{font-family:monospace;color:var(--cyan)}
+.notice{padding:12px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:12px;margin:14px 0}
+#toast{position:fixed;bottom:20px;right:20px;background:#153349;border:1px solid var(--cyan);border-radius:10px;padding:14px;max-width:90%;z-index:10}
+footer{text-align:center;border-top:1px solid var(--line);padding:24px;color:#71849e;font-size:11px}
+@media(max-width:600px){header{padding:14px}main{padding:15px}.card{padding:16px}nav button{padding:8px;font-size:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">LOS SANTOS <span>RP</span></div>
+    <small class="muted">PORTAL CIUDADANO · PS4 ROLEPLAY</small>
+  </div>
+  <nav id="nav"></nav>
+</header>
+
+<main>
+  <section id="auth">
+    <div class="hero">
+      <div class="eyebrow">SAN ANDREAS · SISTEMA CENTRAL</div>
+      <h1>Tu ciudad. Tu historia.</h1>
+      <p>Gestiona tu personaje y accede a los servicios de Los Santos.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="row">
+          <h2 id="authTitle">Iniciar sesión</h2>
+          <span class="pill">● ONLINE</span>
+        </div>
+        <div class="row">
+          <button id="loginTab" class="primary" onclick="setMode('login')">Iniciar sesión</button>
+          <button id="registerTab" onclick="setMode('register')">Crear cuenta</button>
+        </div>
+        <form id="authForm">
+          <label>Nombre de usuario</label>
+          <input name="username" required minlength="3" maxlength="24" autocomplete="username" placeholder="Tu usuario">
+          <label>Contraseña</label>
+          <input name="password" type="password" required minlength="6" autocomplete="current-password" placeholder="Tu contraseña">
+          <div id="registerFields" class="hidden">
+            <label>Confirmar contraseña</label>
+            <input name="confirm" type="password" minlength="6">
+            <label>Nombre del personaje</label>
+            <input name="firstName" maxlength="35" placeholder="Nombre">
+            <label>Apellido</label>
+            <input name="lastName" maxlength="35" placeholder="Apellido">
+            <label>Fecha de nacimiento</label>
+            <input name="birth" type="date" max="2010-12-31">
+            <label>Trabajo</label>
+            <select name="job">
+              <option>Desempleado</option><option>Policía</option>
+              <option>EMS</option><option>Mecánico</option>
+              <option>Taxista</option><option>Transportista</option>
+              <option>Empresario</option>
+            </select>
+          </div>
+          <button class="primary" style="width:100%" id="authSubmit">Entrar al portal →</button>
+        </form>
+        <p id="authMessage"></p>
+        <div class="notice">Prototipo local: las cuentas no se comparten entre dispositivos. Usa datos ficticios.</div>
+      </div>
+      <div class="card">
+        <div class="icon">▦</div>
+        <h2>Central de operaciones</h2>
+        <p>Un sistema para organizar los ciudadanos, los servicios de emergencia, la policía y los negocios de tu servidor.</p>
+        <div class="grid">
+          <div><div class="stat">06</div><small>Módulos PDA</small></div>
+          <div><div class="stat">24/7</div><small>Acceso al portal</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="row">
+      <div>
+        <div class="eyebrow" id="crumb">PANEL CIUDADANO</div>
+        <h1 id="pageTitle">Panel de control</h1>
+        <p id="pageDesc">Bienvenido a Los Santos.</p>
+      </div>
+      <span class="pill">● SESIÓN ACTIVA</span>
+    </div>
+    <div id="content"></div>
+  </section>
+</main>
+
+<footer>LOS SANTOS RP © 2026 · PORTAL COMUNITARIO NO OFICIAL</footer>
+<div id="toast" class="hidden" role="status"></div>
+
+<script>
+const DB="lsrp_interactive_users_v2";
+const SESSION="lsrp_interactive_session_v2";
+const RECORDS="lsrp_interactive_records_v2";
+
+const departments=[
+ {id:"policia",name:"Policía",icon:"✦",desc:"Personal, rangos y actuaciones policiales."},
+ {id:"ems",name:"EMS",icon:"✚",desc:"Personal sanitario e incidencias médicas."},
+ {id:"mecanicos",name:"Mecánicos",icon:"⚙",desc:"Talleres y órdenes de trabajo."},
+ {id:"vehiculos",name:"Vehículos",icon:"▰",desc:"Registro de vehículos de ciudadanos."},
+ {id:"multas",name:"Multas",icon:"▤",desc:"Multas y sanciones de tráfico RP."},
+ {id:"informes",name:"Informes",icon:"▧",desc:"Informes de servicio y novedades."}
+];
+
+let mode="login";
+let current=null;
+let page="home";
+
+const $=id=>document.getElementById(id);
+const read=(key,fallback=[])=>{
+ try{return JSON.parse(localStorage.getItem(key))||fallback}
+ catch{return fallback}
+};
+const write=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+const users=()=>read(DB);
+const records=()=>read(RECORDS);
+
+function notify(text){
+ $("toast").textContent=text;
+ $("toast").classList.remove("hidden");
+ setTimeout(()=>$("toast").classList.add("hidden"),2600);
+}
+function fullName(u){return `${u.firstName} ${u.lastName}`}
+
+function setMode(value){
+ mode=value;
+ $("authTitle").textContent=value==="register"?"Crear cuenta ciudadana":"Iniciar sesión";
+ $("authSubmit").textContent=value==="register"?"Crear cuenta →":"Entrar al portal →";
+ $("registerFields").classList.toggle("hidden",value!=="register");
+ $("loginTab").classList.toggle("primary",value==="login");
+ $("registerTab").classList.toggle("primary",value==="register");
+ $("authMessage").textContent="";
+ $("authForm").reset();
+
+ ["confirm","firstName","lastName","birth","job"].forEach(name=>{
+  const input=$("authForm").elements[name];
+  input.required=value==="register"&&name!=="confirm";
+ });
+}
+
+function showAuth(){
+ $("auth").classList.remove("hidden");
+ $("app").classList.add("hidden");
+ $("nav").innerHTML=`
+  <button onclick="setMode('login')">Iniciar sesión</button>
+  <button class="primary" onclick="setMode('register')">Crear cuenta</button>`;
+}
+
+async function hashPassword(password,salt){
+ const data=new TextEncoder().encode(salt+":"+password);
+ const digest=await crypto.subtle.digest("SHA-256",data);
+ return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+$("authForm").addEventListener("submit",async event=>{
+ event.preventDefault();
+ const f=new FormData(event.currentTarget);
+ const username=String(f.get("username")).trim();
+ const password=String(f.get("password"));
+ const all=users();
+
+ if(mode==="register"){
+  if(password!==f.get("confirm"))return authMessage("Las contraseñas no coinciden.");
+  if(all.some(u=>u.username.toLowerCase()===username.toLowerCase()))
+   return authMessage("Ese nombre de usuario ya existe.");
+  if(!f.get("firstName")||!f.get("lastName")||!f.get("birth"))
+   return authMessage("Completa los datos del personaje.");
+
+  const salt=crypto.randomUUID();
+  const user={
+   username,salt,passwordHash:await hashPassword(password,salt),
+   firstName:String(f.get("firstName")).trim(),
+   lastName:String(f.get("lastName")).trim(),
+   birth:f.get("birth"),job:f.get("job"),
+   id:"LS-"+Math.floor(100000+Math.random()*900000),
+   createdAt:new Date().toISOString()
+  };
+  all.push(user);
+  write(DB,all);
+  startSession(user);
+ }else{
+  const user=all.find(u=>u.username.toLowerCase()===username.toLowerCase());
+  if(!user)return authMessage("Usuario o contraseña incorrectos.");
+  const hashed=await hashPassword(password,user.salt);
+  if(hashed!==user.passwordHash)return authMessage("Usuario o contraseña incorrectos.");
+  startSession(user);
+ }
+});
+
+function authMessage(text){$("authMessage").textContent=text}
+
+function startSession(user){
+ current=user;
+ localStorage.setItem(SESSION,user.username);
+ page="home";
+ $("auth").classList.add("hidden");
+ $("app").classList.remove("hidden");
+ $("nav").innerHTML=`
+  <button onclick="navigate('home')">Inicio</button>
+  <button onclick="navigate('citizens')">Ciudadanos</button>
+  <button onclick="navigate('character')">Mi personaje</button>
+  <button onclick="navigate('pda')">PDA</button>
+  <button class="danger" onclick="logout()">Salir ↗</button>`;
+ render();
+ notify("Sesión iniciada correctamente");
+}
+
+function logout(){
+ current=null;
+ localStorage.removeItem(SESSION);
+ showAuth();
+ setMode("login");
+ notify("Has cerrado sesión");
+}
+
+function navigate(target){
+ page=target;
+ render();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function setHeading(eyebrow,title,desc){
+ $("crumb").textContent=eyebrow;
+ $("pageTitle").textContent=title;
+ $("pageDesc").textContent=desc;
+}
+
+function render(){
+ if(!current)return showAuth();
+ const all=users();
+ const content=$("content");
+
+ if(page==="home"){
+  setHeading("CENTRO DE OPERACIONES","Bienvenido, "+current.firstName,"Tu identidad ciudadana y todos los servicios de Los Santos.");
+  content.innerHTML=`
+   <div class="grid">
+    <div class="card"><p>Ciudadanos registrados</p><div class="stat">${all.length}</div></div>
+    <div class="card"><p>Tu identificación RP</p><div class="stat">${esc(current.id)}</div></div>
+    <div class="card"><p>Módulos PDA</p><div class="stat">06</div></div>
+   </div>
+   <h2>Accesos rápidos</h2>
+   <div class="grid">
+    <div class="card module" onclick="navigate('character')"><div class="icon">♙</div><h3>Mi personaje</h3><p>Consulta tu ficha ciudadana.</p></div>
+    <div class="card module" onclick="navigate('citizens')"><div class="icon">◎</div><h3>Ciudadanos</h3><p>Consulta el registro de personajes.</p></div>
+    <div class="card module" onclick="navigate('pda')"><div class="icon">▦</div><h3>PDA</h3><p>Entra a los seis departamentos.</p></div>
+   </div>
+   <div class="card"><div class="row"><h2>Últimos ciudadanos</h2><button onclick="navigate('citizens')">Ver todos →</button></div>${citizenTable(all.slice(-5).reverse())}</div>`;
+ }
+
+ if(page==="citizens"){
+  setHeading("REGISTRO CIVIL","Lista de ciudadanos","Personajes registrados en este navegador.");
+  content.innerHTML=`<div class="card"><div class="row"><h2>Registro de ciudadanos</h2><span>${all.length} registros</span></div><input id="searchCitizen" placeholder="Buscar por nombre, apellido o ID..." oninput="filterCitizens()"><div id="citizenResults">${citizenTable(all.slice().reverse())}</div></div>`;
+ }
+
+ if(page==="character"){
+  setHeading("IDENTIDAD DIGITAL","Mi personaje","Tu ficha personal de roleplay.");
+  content.innerHTML=`
+   <div class="grid">
+    <div class="card"><div class="icon">♙</div><h2>${esc(fullName(current))}</h2><p>Usuario: @${esc(current.username)}</p><div class="stat">${esc(current.id)}</div><span class="pill">● REGISTRADO</span></div>
+    <div class="card"><h2>Datos personales</h2>
+     <p>Nombre: <b>${esc(current.firstName)}</b></p>
+     <p>Apellido: <b>${esc(current.lastName)}</b></p>
+     <p>Nacimiento: <b>${esc(current.birth)}</b></p>
+     <p>Trabajo: <b>${esc(current.job)}</b></p>
+     <p>ID RP: <b>${esc(current.id)}</b></p>
+     <p>Registro: <b>${new Date(current.createdAt).toLocaleDateString("es-ES")}</b></p>
+    </div>
+   </div>
+   <div class="card"><h2>¿Quieres entrar en servicio?</h2><p>Accede a los módulos de tu ciudad desde la PDA.</p><button class="primary" onclick="navigate('pda')">Abrir PDA →</button></div>`;
+ }
+
+ if(page==="pda"){
+  setHeading("PERSONAL DIGITAL ASSISTANT","PDA de Los Santos","Selecciona un departamento para consultar o crear registros.");
+  content.innerHTML=`<div class="grid">${departments.map(d=>`
+   <div class="card module" onclick="navigate('${d.id}')">
+    <div class="icon">${d.icon}</div><h3>${d.name}</h3><p>${d.desc}</p><button>Acceder →</button>
+   </div>`).join("")}</div>`;
+ }
+
+ const department=departments.find(d=>d.id===page);
+ if(department)renderDepartment(department);
+}
+
+function citizenTable(list){
+ if(!list.length)return "<p>No hay ciudadanos registrados todavía.</p>";
+ return `<div class="tablewrap"><table>
+ <thead><tr><th>ID RP</th><th>Nombre</th><th>Apellido</th><th>Nacimiento</th><th>Trabajo</th></tr></thead>
+ <tbody>${list.map(u=>`<tr>
+ <td class="id">${esc(u.id)}</td><td>${esc(u.firstName)}</td>
+ <td>${esc(u.lastName)}</td><td>${esc(u.birth)}</td><td>${esc(u.job)}</td>
+ </tr>`).join("")}</tbody></table></div>`;
+}
+
+function filterCitizens(){
+ const q=$("searchCitizen").value.toLowerCase();
+ const filtered=users().slice().reverse().filter(u=>
+  [u.id,u.firstName,u.lastName,u.job].some(v=>String(v).toLowerCase().includes(q))
+ );
+ $("citizenResults").innerHTML=citizenTable(filtered);
+}
+
+function renderDepartment(d){
+ setHeading("PDA / "+d.name.toUpperCase(),d.name,d.desc);
+ const items=records().filter(r=>r.type===d.id);
+ $("content").innerHTML=`
+  <div class="grid">
+   <div class="card">
+    <h2>Crear registro</h2>
+    <form id="recordForm">
+     <label>Título del registro</label>
+     <input name="title" required maxlength="90" placeholder="Ej. Informe de servicio">
+     <label>Detalles</label>
+     <textarea name="detail" required maxlength="1000" placeholder="Escribe los detalles del registro RP..."></textarea>
+     <button class="primary">Guardar registro →</button>
+    </form>
+    <p class="muted">Autor: ${esc(current.username)}</p>
+   </div>
+   <div class="card">
+    <div class="row"><h2>Registros</h2><span>${items.length} total</span></div>
+    ${items.length?items.slice().reverse().map(r=>`
+     <div style="border-bottom:1px solid var(--line);padding:12px 0">
+      <div class="row"><b>${esc(r.title)}</b><button class="danger" onclick="deleteRecord('${r.id}')">Eliminar</button></div>
+      <p>${esc(r.detail)}</p><small class="muted">${esc(r.author)} · ${esc(r.date)}</small>
+     </div>`).join(""):"<p>Todavía no hay registros en este módulo.</p>"}
+   </div>
+  </div>
+  <button onclick="navigate('pda')">← Volver a la PDA</button>`;
+
+ $("recordForm").addEventListener("submit",event=>{
+  event.preventDefault();
+  const form=new FormData(event.currentTarget);
+  const all=records();
+  all.push({
+   id:crypto.randomUUID(),type:d.id,
+   title:String(form.get("title")).trim(),
+   detail:String(form.get("detail")).trim(),
+   author:current.username,
+   date:new Date().toLocaleString("es-ES")
+  });
+  write(RECORDS,all);
+  notify("Registro guardado");
+  renderDepartment(d);
+ });
+}
+
+function deleteRecord(id){
+ const item=records().find(r=>r.id===id);
+ if(!item)return;
+ if(item.author!==current.username){
+  notify("Solo quien creó este registro puede eliminarlo.");
+  return;
+ }
+ if(!confirm("¿Seguro que quieres eliminar este registro?"))return;
+ write(RECORDS,records().filter(r=>r.id!==id));
+ notify("Registro eliminado");
+ render();
+}
+
+const saved=localStorage.getItem(SESSION);
+if(saved){
+ current=users().find(u=>u.username===saved)||null;
+}
+if(current){
+ $("auth").classList.add("hidden");
+ $("app").classList.remove("hidden");
+ $("nav").innerHTML=`
+  <button onclick="navigate('home')">Inicio</button>
+  <button onclick="navigate('citizens')">Ciudadanos</button>
+  <button onclick="navigate('character')">Mi personaje</button>
+  <button onclick="navigate('pda')">PDA</button>
+  <button class="danger" onclick="logout()">Salir ↗</button>`;
+ render();
+}else{
+ showAuth();
+ setMode("login");
+}
+</script>
+</body>
+</html>
